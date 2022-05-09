@@ -1,0 +1,6 @@
+node_modules/
+sass/
+style.map
+package.json
+package-lock.json
+.eslintrc.js
