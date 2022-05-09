@@ -2,8 +2,6 @@ class Keyboard {
   constructor() {
     this.main = null;
     this.keysContainer = null;
-    this.keys = [];
-    this.inputValue = '';
     this.capsLock = false;
     this.shift = false;
     this.language = localStorage.getItem('language') || 'en';
@@ -66,7 +64,6 @@ class Keyboard {
   }
 
   createKeys() {
-    // this.keysContainer.innerHTML = ''
     // variables
     let languageLayout;
     let languageCaps;
@@ -81,7 +78,7 @@ class Keyboard {
     }
 
     // loop for creating keys
-    for (const row in languageLayout) {
+    Object.keys(languageLayout).forEach((row) => {
       const rowElement = document.createElement('div');
       rowElement.classList.add('row');
       this.keysContainer.append(rowElement);
@@ -141,13 +138,12 @@ class Keyboard {
         keyElement.innerHTML = languageLayout[row][i];
         rowElement.append(keyElement);
       }
-    }
-
-    // setting attributes
-    const keys = document.querySelectorAll('.key');
-    for (let i = 0; i < keys.length; i += 1) {
-      keys[i].setAttribute('keyCode', this.allCodesArray[i]);
-    }
+      // setting attributes
+      const keys = document.querySelectorAll('.key');
+      for (let i = 0; i < keys.length; i += 1) {
+        keys[i].setAttribute('keyCode', this.allCodesArray[i]);
+      }
+    });
   }
 
   toCaps() {
@@ -157,13 +153,13 @@ class Keyboard {
     // checking caps lock pressed or not
     if (this.capsLock === false) {
       this.capsLock = true;
-      for (const key of capsableKeys) {
-        key.innerText = key.innerText.toUpperCase();
+      for (let i = 0; i < capsableKeys.length; i += 1) {
+        capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
       }
     } else {
       this.capsLock = false;
-      for (const key of capsableKeys) {
-        key.innerText = key.innerText.toLowerCase();
+      for (let i = 0; i < capsableKeys.length; i += 1) {
+        capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
       }
     }
   }
@@ -173,8 +169,8 @@ class Keyboard {
       const shiftableKeys = document.querySelectorAll('.shiftable');
       const capsableKeys = document.querySelectorAll('.capsable');
 
-      for (const key of capsableKeys) {
-        key.innerText = key.innerText.toUpperCase();
+      for (let i = 0; i < capsableKeys.length; i += 1) {
+        capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
       }
       if (this.language === 'en') {
         for (let i = 0; i < shiftableKeys.length; i += 1) {
@@ -195,8 +191,8 @@ class Keyboard {
     const shiftableKeys = document.querySelectorAll('.shiftable');
     const capsableKeys = document.querySelectorAll('.capsable');
 
-    for (const key of capsableKeys) {
-      key.innerText = key.innerText.toLowerCase();
+    for (let i = 0; i < capsableKeys.length; i += 1) {
+      capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
     }
     if (this.language === 'en') {
       for (let i = 0; i < shiftableKeys.length; i += 1) {
@@ -212,23 +208,23 @@ class Keyboard {
   toLanguage() {
     const keys = document.querySelectorAll('.key');
     let keyLayoutArray = [];
-    if (kbrd.language === 'en') {
-      for (const row in this.keyLayoutRU) {
+    if (this.language === 'en') {
+      Object.keys(this.keyLayoutRU).forEach((row) => {
         keyLayoutArray = keyLayoutArray.concat(this.keyLayoutRU[row]);
-      }
-      kbrd.language = 'ru';
+      });
+      this.language = 'ru';
       localStorage.setItem('language', 'ru');
     } else {
-      for (const row in this.keyLayout) {
+      Object.keys(this.keyLayout).forEach((row) => {
         keyLayoutArray = keyLayoutArray.concat(this.keyLayout[row]);
-      }
-      kbrd.language = 'en';
+      });
+      this.language = 'en';
       localStorage.setItem('language', 'en');
     }
 
     for (let i = 0; i < keys.length; i += 1) {
       keys[i].innerHTML = keyLayoutArray[i];
-      if (kbrd.language === 'en') {
+      if (this.language === 'en') {
         if (this.canBeShifted.includes(keys[i].innerHTML)) {
           keys[i].classList.add('shiftable');
         } else {
@@ -253,121 +249,121 @@ class Keyboard {
 
     // adding listeners
     // 1. keydown
-    function keyDown(e) {
+    window.addEventListener('keydown', (e) => {
       e.preventDefault();
       for (let i = 0; i < keys.length; i += 1) {
         // if pressed caps
         if (e.code === keys[i].getAttribute('keyCode') && e.code === 'CapsLock') {
           keys[i].classList.toggle('active');
-          kbrd.toCaps();
+          this.toCaps();
         } else if (e.code === keys[i].getAttribute('keyCode')) {
           keys[i].classList.add('active');
-          const cursor = kbrd.input.selectionStart;
-          let inputValue = kbrd.input.value;
+          const cursor = this.input.selectionStart;
+          const cursorEnd = this.input.selectionEnd;
+          const { value } = this.input;
           if (e.code === 'Tab') {
-            kbrd.input.value = `${inputValue.slice(0, cursor)}\t${inputValue.slice(cursor)}`;
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = `${value.slice(0, cursor)}\t${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           } else if (e.code === 'Backspace') {
-            if (cursor > 0) {
-                kbrd.input.value = inputValue.slice(0, cursor - 1) + inputValue.slice(cursor);
-              kbrd.input.selectionStart = cursor - 1;
-              kbrd.input.selectionEnd = cursor - 1;
+            if (cursor !== cursorEnd) {
+              this.input.value = value.slice(0, cursor) + value.slice(cursorEnd);
+              this.input.selectionStart = cursor;
+              this.input.selectionEnd = cursor;
+            } else if (cursor > 0) {
+              this.input.value = value.slice(0, cursor - 1) + value.slice(cursor);
+              this.input.selectionStart = cursor - 1;
+              this.input.selectionEnd = cursor - 1;
             }
           } else if (e.code === 'Enter') {
-            kbrd.input.value = `${inputValue.slice(0, cursor)}\n${inputValue.slice(cursor)}`;
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = `${value.slice(0, cursor)}\n${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           } else if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
-            kbrd.input.value = inputValue.slice(0, cursor) + keys[i].innerHTML + inputValue.slice(cursor);
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = value.slice(0, cursor) + keys[i].innerText + value.slice(cursor);
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           }
         }
       }
 
       if (e.key === 'Shift') {
-        kbrd.toShift();
+        this.toShift();
       }
 
       if (e.code === 'AltLeft') {
-        kbrd.languageFlag = true;
+        this.languageFlag = true;
         setTimeout(() => {
-          kbrd.languageFlag = false;
+          this.languageFlag = false;
         }, 200);
       }
 
-      if (e.code === 'ShiftLeft' && kbrd.languageFlag) {
-        kbrd.toLanguage();
-        kbrd.languageFlag = false;
+      if (e.code === 'ShiftLeft' && this.languageFlag) {
+        this.toLanguage();
+        this.languageFlag = false;
       }
-    }
-
-    window.addEventListener('keydown', keyDown);
+    });
 
     // 2. keyup
-    function keyUp(e) {
+    window.addEventListener('keyup', (e) => {
       for (let i = 0; i < keys.length; i += 1) {
         if (e.code === keys[i].getAttribute('keyCode') && e.code !== 'CapsLock') {
           keys[i].classList.remove('active');
         }
       }
       if (e.key === 'Shift') {
-        kbrd.toUnshift();
+        this.toUnshift();
       }
-    }
-    window.addEventListener('keyup', keyUp);
+    });
 
     // 3. click on key
-    function click(e) {
+    this.keysContainer.addEventListener('click', (e) => {
       const attribute = e.target.getAttribute('keyCode');
       for (let i = 0; i < keys.length; i += 1) {
         if (attribute === keys[i].getAttribute('keyCode') && attribute === 'CapsLock') {
           keys[i].classList.toggle('active');
-          kbrd.toCaps();
+          this.toCaps();
         } else if ((attribute === keys[i].getAttribute('keyCode') && attribute === 'ShiftLeft') || (attribute === keys[i].getAttribute('keyCode') && attribute === 'ShiftRight')) {
           keys[i].classList.toggle('active');
         } else if (attribute === keys[i].getAttribute('keyCode')) {
           keys[i].classList.add('active');
           setTimeout(() => keys[i].classList.remove('active'), 100);
-          const cursor = kbrd.input.selectionStart;
-          let inputValue = kbrd.input.value;
+          const cursor = this.input.selectionStart;
+          const cursorEnd = this.input.selectionEnd;
+          const { value } = this.input;
           if (attribute === 'Tab') {
-            kbrd.input.value = `${inputValue.slice(0, cursor)}\t${inputValue.slice(cursor)}`;
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = `${value.slice(0, cursor)}\t${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           } else if (attribute === 'Backspace') {
-            if (cursor > 0) {
-              kbrd.input.value = inputValue.slice(0, cursor - 1) + inputValue.slice(cursor);
-              kbrd.input.selectionStart = cursor - 1;
-              kbrd.input.selectionEnd = cursor - 1;
+            if (cursor !== cursorEnd) {
+              this.input.value = value.slice(0, cursor) + value.slice(cursorEnd);
+              this.input.selectionStart = cursor;
+              this.input.selectionEnd = cursor;
+            } else if (cursor > 0) {
+              this.input.value = value.slice(0, cursor - 1) + value.slice(cursor);
+              this.input.selectionStart = cursor - 1;
+              this.input.selectionEnd = cursor - 1;
             }
           } else if (attribute === 'Enter') {
-            kbrd.input.value = `${inputValue.slice(0, cursor)}\n${inputValue.slice(cursor)}`;
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = `${value.slice(0, cursor)}\n${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           } else if (attribute !== 'ControlLeft' && attribute !== 'ControlRight' && attribute !== 'ShiftLeft' && attribute !== 'ShiftRight' && attribute !== 'AltLeft' && attribute !== 'AltRight' && attribute !== 'MetaLeft') {
-            kbrd.input.value = inputValue.slice(0, cursor) + keys[i].innerHTML + inputValue.slice(cursor);
-            kbrd.input.selectionStart = cursor + 1;
-            kbrd.input.selectionEnd = cursor + 1;
+            this.input.value = value.slice(0, cursor) + keys[i].innerHTML + value.slice(cursor);
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
           }
         }
       }
       if (attribute === 'ShiftLeft' || attribute === 'ShiftRight') {
-        if (kbrd.shift) {
-          kbrd.toUnshift();
-          // if (kbrd.capsLock) {
-          //     kbrd.toCaps()
-          // }
+        if (this.shift) {
+          this.toUnshift();
         } else {
-          kbrd.toShift();
-          // if (kbrd.capsLock) {
-          //     kbrd.toCaps()
-          // }
+          this.toShift();
         }
       }
-    }
-    this.keysContainer.addEventListener('click', click);
+    });
   }
 }
 
