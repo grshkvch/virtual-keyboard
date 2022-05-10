@@ -153,13 +153,25 @@ class Keyboard {
     // checking caps lock pressed or not
     if (this.capsLock === false) {
       this.capsLock = true;
-      for (let i = 0; i < capsableKeys.length; i += 1) {
-        capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+      if (this.shift) {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+        }
+      } else {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+        }
       }
     } else {
       this.capsLock = false;
-      for (let i = 0; i < capsableKeys.length; i += 1) {
-        capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+      if (this.shift) {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+        }
+      } else {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+        }
       }
     }
   }
@@ -169,9 +181,16 @@ class Keyboard {
       const shiftableKeys = document.querySelectorAll('.shiftable');
       const capsableKeys = document.querySelectorAll('.capsable');
 
-      for (let i = 0; i < capsableKeys.length; i += 1) {
-        capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+      if (this.capsLock) {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+        }
+      } else {
+        for (let i = 0; i < capsableKeys.length; i += 1) {
+          capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+        }
       }
+
       if (this.language === 'en') {
         for (let i = 0; i < shiftableKeys.length; i += 1) {
           shiftableKeys[i].innerHTML = this.ifShifted[i];
@@ -191,8 +210,14 @@ class Keyboard {
     const shiftableKeys = document.querySelectorAll('.shiftable');
     const capsableKeys = document.querySelectorAll('.capsable');
 
-    for (let i = 0; i < capsableKeys.length; i += 1) {
-      capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+    if (this.capsLock) {
+      for (let i = 0; i < capsableKeys.length; i += 1) {
+        capsableKeys[i].innerText = capsableKeys[i].innerText.toUpperCase();
+      }
+    } else {
+      for (let i = 0; i < capsableKeys.length; i += 1) {
+        capsableKeys[i].innerText = capsableKeys[i].innerText.toLowerCase();
+      }
     }
     if (this.language === 'en') {
       for (let i = 0; i < shiftableKeys.length; i += 1) {
@@ -254,9 +279,16 @@ class Keyboard {
       for (let i = 0; i < keys.length; i += 1) {
         // if pressed caps
         if (e.code === keys[i].getAttribute('keyCode') && e.code === 'CapsLock') {
-          keys[i].classList.toggle('active');
+          if (this.capsLock) {
+            keys[i].classList.add('remove');
+            keys[i].classList.remove('active');
+          } else {
+            keys[i].classList.remove('remove');
+            keys[i].classList.add('active');
+          }
           this.toCaps();
         } else if (e.code === keys[i].getAttribute('keyCode')) {
+          keys[i].classList.remove('remove');
           keys[i].classList.add('active');
           const cursor = this.input.selectionStart;
           const cursorEnd = this.input.selectionEnd;
@@ -277,6 +309,10 @@ class Keyboard {
             }
           } else if (e.code === 'Enter') {
             this.input.value = `${value.slice(0, cursor)}\n${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
+          } else if (e.code === 'Space') {
+            this.input.value = `${value.slice(0, cursor)} ${value.slice(cursor)}`;
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
           } else if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
@@ -309,6 +345,7 @@ class Keyboard {
       for (let i = 0; i < keys.length; i += 1) {
         if (e.code === keys[i].getAttribute('keyCode') && e.code !== 'CapsLock') {
           keys[i].classList.remove('active');
+          keys[i].classList.add('remove');
         }
       }
       if (e.key === 'Shift') {
@@ -321,13 +358,30 @@ class Keyboard {
       const attribute = e.target.getAttribute('keyCode');
       for (let i = 0; i < keys.length; i += 1) {
         if (attribute === keys[i].getAttribute('keyCode') && attribute === 'CapsLock') {
-          keys[i].classList.toggle('active');
+          if (this.capsLock) {
+            keys[i].classList.add('remove');
+            keys[i].classList.remove('active');
+          } else {
+            keys[i].classList.remove('remove');
+            keys[i].classList.add('active');
+          }
           this.toCaps();
         } else if ((attribute === keys[i].getAttribute('keyCode') && attribute === 'ShiftLeft') || (attribute === keys[i].getAttribute('keyCode') && attribute === 'ShiftRight')) {
-          keys[i].classList.toggle('active');
+          if (this.shift) {
+            keys[i].classList.add('remove');
+            keys[i].classList.remove('active');
+          } else {
+            keys[i].classList.remove('remove');
+            keys[i].classList.add('active');
+          }
         } else if (attribute === keys[i].getAttribute('keyCode')) {
+          keys[i].classList.remove('remove');
           keys[i].classList.add('active');
-          setTimeout(() => keys[i].classList.remove('active'), 100);
+          setTimeout(() => {
+            keys[i].classList.remove('active');
+            keys[i].classList.add('remove');
+          }, 200);
+
           const cursor = this.input.selectionStart;
           const cursorEnd = this.input.selectionEnd;
           const { value } = this.input;
@@ -347,6 +401,10 @@ class Keyboard {
             }
           } else if (attribute === 'Enter') {
             this.input.value = `${value.slice(0, cursor)}\n${value.slice(cursor)}`;
+            this.input.selectionStart = cursor + 1;
+            this.input.selectionEnd = cursor + 1;
+          } else if (attribute === 'Space') {
+            this.input.value = `${value.slice(0, cursor)} ${value.slice(cursor)}`;
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
           } else if (attribute !== 'ControlLeft' && attribute !== 'ControlRight' && attribute !== 'ShiftLeft' && attribute !== 'ShiftRight' && attribute !== 'AltLeft' && attribute !== 'AltRight' && attribute !== 'MetaLeft') {
