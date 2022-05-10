@@ -278,16 +278,7 @@ class Keyboard {
       e.preventDefault();
       for (let i = 0; i < keys.length; i += 1) {
         // if pressed caps
-        if (e.code === keys[i].getAttribute('keyCode') && e.code === 'CapsLock') {
-          if (this.capsLock) {
-            keys[i].classList.add('remove');
-            keys[i].classList.remove('active');
-          } else {
-            keys[i].classList.remove('remove');
-            keys[i].classList.add('active');
-          }
-          this.toCaps();
-        } else if (e.code === keys[i].getAttribute('keyCode')) {
+        if (e.code === keys[i].getAttribute('keyCode')) {
           keys[i].classList.remove('remove');
           keys[i].classList.add('active');
           const cursor = this.input.selectionStart;
@@ -315,7 +306,7 @@ class Keyboard {
             this.input.value = `${value.slice(0, cursor)} ${value.slice(cursor)}`;
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
-          } else if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta') {
+          } else if (e.key !== 'Control' && e.key !== 'Shift' && e.key !== 'Alt' && e.key !== 'Meta' && e.key !== 'CapsLock') {
             this.input.value = value.slice(0, cursor) + keys[i].innerText + value.slice(cursor);
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
@@ -343,7 +334,16 @@ class Keyboard {
     // 2. keyup
     window.addEventListener('keyup', (e) => {
       for (let i = 0; i < keys.length; i += 1) {
-        if (e.code === keys[i].getAttribute('keyCode') && e.code !== 'CapsLock') {
+        if (e.code === keys[i].getAttribute('keyCode') && e.code === 'CapsLock') {
+          if (this.capsLock) {
+            keys[i].classList.add('remove');
+            keys[i].classList.remove('active');
+          } else {
+            keys[i].classList.remove('remove');
+            keys[i].classList.add('active');
+          }
+          this.toCaps();
+        } else if (e.code === keys[i].getAttribute('keyCode') && e.code !== 'CapsLock') {
           keys[i].classList.remove('active');
           keys[i].classList.add('remove');
         }
