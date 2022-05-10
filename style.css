@@ -63,7 +63,7 @@ body {
   position: relative;
   margin: 3px;
   border-radius: 5px;
-  transition: .1s;
+  transition: .3s;
   cursor: pointer;
   background-color: #f5deb3;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
@@ -75,58 +75,90 @@ body {
   color: #fff;
 }
 
-/* line 65, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 64, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .key.active {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  animation: anime-add 0.3s;
+  animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards;
 }
 
 /* line 69, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+.row .key.remove {
+  animation: anime-remove 0.3s;
+  animation-fill-mode: forwards;
+  -webkit-animation-fill-mode: forwards;
+}
+
+/* line 74, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .backspace-key {
   width: 150px;
 }
 
-/* line 71, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 76, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .tab-key {
   width: 120px;
 }
 
-/* line 73, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 78, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .reversed-slash-key {
   width: 100px;
 }
 
-/* line 75, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 80, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .caps-lock-key {
   width: 122px;
 }
 
-/* line 77, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 82, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .enter-key {
   width: 180px;
 }
 
-/* line 79, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 84, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .right-shift-key {
   width: 147px;
 }
 
-/* line 81, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 86, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .left-shift-key {
   width: 145px;
 }
 
-/* line 83, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 88, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .row .space-key {
   width: 50%;
   max-width: 525px;
 }
 
-/* line 87, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
+/* line 92, C:/Users/Red Sun/Desktop/another-project/virtual-keyboard/sass/style.sass */
 .note {
   line-height: 1.6;
   color: #deb887;
   text-align: center;
+}
+
+@keyframes anime-add {
+  0% {
+    background-color: #f5deb3;
+    color: #000;
+  }
+  100% {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 20px;
+  }
+}
+
+@keyframes anime-remove {
+  0% {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 20px;
+  }
+  100% {
+    background-color: #f5deb3;
+    color: #000;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
