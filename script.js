@@ -350,7 +350,7 @@ class Keyboard {
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
           } else if (attribute !== 'ControlLeft' && attribute !== 'ControlRight' && attribute !== 'ShiftLeft' && attribute !== 'ShiftRight' && attribute !== 'AltLeft' && attribute !== 'AltRight' && attribute !== 'MetaLeft') {
-            this.input.value = value.slice(0, cursor) + keys[i].innerHTML + value.slice(cursor);
+            this.input.value = value.slice(0, cursor) + keys[i].innerText + value.slice(cursor);
             this.input.selectionStart = cursor + 1;
             this.input.selectionEnd = cursor + 1;
           }
